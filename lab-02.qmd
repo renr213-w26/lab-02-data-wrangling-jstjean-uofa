@@ -32,13 +32,30 @@ count(state, sort = TRUE)
 
 Comment: Illinois has the most amount of counties with 102, and Wisconsin has the least with 72.
 
+\newpage
+
 ### Question 2
+
+```{r}
+
+midwest |>
+  count(county,state) |>
+  count(county, name = "n_states")|>
+  filter(n_states == n_distinct(midwest$state)) 
+  
+```
 
 \newpage
 
 ### Question 3
 
+```{r}
+
+```
+
 \newpage
+
+### Question 4
 
 ### Question 5
 
