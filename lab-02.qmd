@@ -1,9 +1,8 @@
 ---
 title: "Lab 2 - Data wrangling"
-author: "John Q. Student"
-date: "June 24, 1497"
+author: "Jessica St. Jean"
+date: "February 10, 2026"
 format: 
-  html: default # for speed
   pdf: default # for final output
 ---
 
@@ -18,9 +17,20 @@ library(tidyverse)
 
 ## Part 1
 
-### Question 1
+```{r}
+?midwest
+```
 
 \newpage
+
+### Question 1
+
+```{r}
+midwest |>
+count(state, sort = TRUE)
+```
+
+Comment: Illinois has the most amount of counties with 102, and Wisconsin has the least with 72.
 
 ### Question 2
 
