@@ -94,6 +94,71 @@ midwest |>
 
 ### Question 6
 
+```{r}
+midwest |>
+  filter(percbelowpoverty >=40,
+         percollege <=10) |>
+  select(county,state, 
+         percbelowpoverty,
+         percollege)
+```
+
+```{r}
+midwest |>
+  filter(percbelowpoverty <= 20, 
+         percollege >= 40) |>
+  select(county, state, 
+         percbelowpoverty, 
+         percollege)
+```
+
+```{r}
+midwest |>
+  filter(
+    (percbelowpoverty >= 40 & percollege <= 10) |
+  (percbelowpoverty <=20 & percollege >= 40)
+) |>
+  select(county, state,
+         percbelowpoverty,
+         percollege)
+```
+
+```{r}
+midwest |> 
+   mutate( 
+     potential_outlier = if_else(
+       (percbelowpoverty >= 40 & percollege <= 10) |
+         (percbelowpoverty <=20 & percollege >= 40), 
+       "Yes",
+       "No"
+     )
+     )|>
+  select(county, state, 
+         percbelowpoverty, 
+         percollege,
+         potential_outlier)|>
+  arrange(potential_outlier)
+```
+
+```{r}
+midwest |> 
+   mutate( 
+     potential_outlier = if_else(
+       (percbelowpoverty >= 40 & percollege <= 10) |
+         (percbelowpoverty <=20 & percollege >= 40), 
+       "Yes",
+       "No"
+     )
+     )|>
+ggplot(aes(x=percollege, y=percbelowpoverty, colour = potential_outlier, shape = state)) +
+geom_point() +
+  labs(x= "Population that is college educated (%)",
+    y= "Population below the poverty line (%)",
+    colour = "Potential Outlier",
+    shape = "The state the county is in",
+    title= "Percent College education vs Percent Below the Poverty Line \nby County")
+```
+
 \newpage
 
 ### Question 7
