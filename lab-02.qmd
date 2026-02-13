@@ -83,6 +83,13 @@ The distribution of population density of counties is unimodal and extremely rig
 
 ### Question 5
 
+```{r}
+midwest |>
+  count(state,inmetro)|>
+  group_by(state) |>
+  mutate(prop=n/sum(n))
+```
+
 \newpage
 
 ### Question 6
