@@ -163,6 +163,10 @@ geom_point() +
 
 ### Question 7
 
+```{r}
+
+```
+
 \newpage
 
 ### Question 8
