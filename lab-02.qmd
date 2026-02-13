@@ -245,7 +245,7 @@ df |>
   summarize(mean_var_1 = mean(var_1))
 ```
 
-Comment: Now the tibble is grouped by both variable 2 and variable 3, so it calculates the mean of variable 1 for each combination of variable 2 and variable 3.
+Comment: Now the tibble is grouped by both variable 2 and variable 3, so it calculates the mean of variable 1 for each combination of variable 2 and variable 3. The message is saying that you can use the .groups argument to change the way the output is grouped.
 
 ```{r}
 df |>
