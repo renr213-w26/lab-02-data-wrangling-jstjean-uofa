@@ -206,3 +206,67 @@ Comment: The state with the lowest below poverty percentage is Indiana at approx
 ## Part 2
 
 ### Question 9
+
+```{r}
+df <- tibble(
+  var_1 = c(10, 20, 30, 40, 50),
+  var_2 = c("Pizza", "Burger", "Pizza", "Pizza", "Burger"),
+  var_3 = c("Apple", "Apple", "Pear", "Pear", "Banana")
+)
+
+df
+```
+
+```{r}
+df |>
+  arrange(var_2)
+```
+
+Comment: It sorts the rows of the table in alphabetical order according to variable 2.
+
+```{r}
+df |>
+  group_by(var_2)
+```
+
+Comment: This groups data by variable 2, this is not reflected in the tibble but would matter if you were to try to do something else with the data, like mutate it or summarize it. It is different than arrange in the way that it does not change the order of the rows.
+
+```{r}
+df |>
+  group_by(var_2) |>
+  summarize(mean_var_1 = mean(var_1))
+```
+
+Comment: This groups it by variable 2 and then calculates the mean of variable 1 for each group. Now the tibble shows only 2 rows of variable 2 because we used the groups.
+
+```{r}
+df |>
+  group_by(var_2, var_3) |>
+  summarize(mean_var_1 = mean(var_1))
+```
+
+Comment: Now the tibble is grouped by both variable 2 and variable 3, so it calculates the mean of variable 1 for each combination of variable 2 and variable 3.
+
+```{r}
+df |>
+  group_by(var_2, var_3) |>
+  summarize(mean_var_1 = mean(var_1), .groups = "drop")
+```
+
+Comment: This code makes it so after the summarize is done the groups are "dropped" or removed, so any more code would apply to all of the data and not any groups. This is different from the code in d) which still has all the data grouped after.
+
+```{r}
+df |>
+  group_by(var_2, var_3) |>
+  summarize(mean_var_1 = mean(var_1), .groups = "drop")
+
+```
+
+```{r}
+
+df |>
+  group_by(var_2, var_3) |>
+  mutate(mean_var_1 = mean(var_1))
+```
+
+Comment: The code with summarize makes it so there is only one row per group and the mutate code makes it so there are still all the original rows.
