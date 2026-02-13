@@ -187,7 +187,19 @@ Comment: Illinois has the largest population, with approximately 27% of people i
 
 ```{r}
 
+state_poverty <- midwest |>
+  group_by(state) |>
+  summarize(mean_percbelowpoverty = mean(percbelowpoverty))
+
+state_poverty
 ```
+
+```{r}
+state_poverty |>
+  arrange(mean_percbelowpoverty)
+```
+
+Comment: The state with the lowest below poverty percentage is Indiana at approximately 10% and the state with the highest below poverty percentage is Michigan.
 
 \newpage
 
