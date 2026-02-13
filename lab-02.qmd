@@ -1,13 +1,10 @@
 ---
 title: "Lab 2 - Data wrangling"
-author: "John Q. Student"
-date: "June 24, 1497"
+author: "Jessica St. Jean"
+date: "February 10, 2026"
 format: 
-  html: default # for speed
   pdf: default # for final output
-
 ---
-
 
 ```{r}
 #| eval: true
@@ -16,41 +13,260 @@ format:
 library(tidyverse)
 ```
 
-
 # Questions
 
 ## Part 1
 
+```{r}
+?midwest
+```
+
+\newpage
+
 ### Question 1
 
+```{r}
+midwest |>
+count(state, sort = TRUE)
+```
+
+Comment: Illinois has the most amount of counties with 102, and Wisconsin has the least with 72.
 
 \newpage
 
 ### Question 2
 
+```{r}
+
+midwest |>
+  count(county,state) |>
+  count(county, name = "n_states")|>
+  filter(n_states == n_distinct(midwest$state)) 
+  
+```
+
 \newpage
 
 ### Question 3
+
+```{r}
+midwest |>
+  filter(popdensity > 25000) |>
+  select(county,state,popdensity,poptotal,area) |>
+  arrange(desc(popdensity))
+```
+
+```{r}
+midwest |>
+  filter(popdensity == max(popdensity)) |>
+  select(county,state,popdensity,poptotal,area)
+```
+
+\newpage
+
+### Question 4
+
+```{r}
+midwest|>
+  summarize(
+    median(popdensity),
+    q1 = quantile(popdensity, 0.25),
+    q3 = quantile(popdensity, 0.75)
+  )
+```
+
+Comment:
+
+The distribution of population density of counties is unimodal and extremely right-skewed. A typical Midwestern county has population density of 1156.208 people per unit area. The middle 50% of the counties have population densities between 622.4074 to 2330 people per unit area.
+
 \newpage
 
 ### Question 5
+
+```{r}
+midwest |>
+  count(state,inmetro)|>
+  group_by(state) |>
+  mutate(prop=n/sum(n))
+```
 
 \newpage
 
 ### Question 6
 
+```{r}
+midwest |>
+  filter(percbelowpoverty >=40,
+         percollege <=10) |>
+  select(county,state, 
+         percbelowpoverty,
+         percollege)
+```
+
+```{r}
+midwest |>
+  filter(percbelowpoverty <= 20, 
+         percollege >= 40) |>
+  select(county, state, 
+         percbelowpoverty, 
+         percollege)
+```
+
+```{r}
+midwest |>
+  filter(
+    (percbelowpoverty >= 40 & percollege <= 10) |
+  (percbelowpoverty <=20 & percollege >= 40)
+) |>
+  select(county, state,
+         percbelowpoverty,
+         percollege)
+```
+
+```{r}
+midwest |> 
+   mutate( 
+     potential_outlier = if_else(
+       (percbelowpoverty >= 40 & percollege <= 10) |
+         (percbelowpoverty <=20 & percollege >= 40), 
+       "Yes",
+       "No"
+     )
+     )|>
+  select(county, state, 
+         percbelowpoverty, 
+         percollege,
+         potential_outlier)|>
+  arrange(potential_outlier)
+```
+
+```{r}
+midwest |> 
+   mutate( 
+     potential_outlier = if_else(
+       (percbelowpoverty >= 40 & percollege <= 10) |
+         (percbelowpoverty <=20 & percollege >= 40), 
+       "Yes",
+       "No"
+     )
+     )|>
+ggplot(aes(x=percollege, y=percbelowpoverty, colour = potential_outlier, shape = state)) +
+geom_point() +
+  labs(x= "Population that is college educated (%)",
+    y= "Population below the poverty line (%)",
+    colour = "Potential Outlier",
+    shape = "The state the county is in",
+    title= "Percent College education vs Percent Below the Poverty Line \nby County")
+```
+
 \newpage
 
 ### Question 7
+
+```{r}
+state_population <- midwest |>
+  group_by(state) |>
+  summarize(total_population =sum(poptotal))|>
+  arrange(desc(total_population))
+state_population
+```
+
+```{r}
+state_population |>
+  mutate(
+    population_prop = total_population / sum(total_population)
+  ) |>
+  arrange(desc(population_prop))
+```
+
+Comment: Illinois has the largest population, with approximately 27% of people in the Midwest living there. Wisconsin has the smallest population with approximately 12% of the population living there.
 
 \newpage
 
 ### Question 8
 
+```{r}
+
+state_poverty <- midwest |>
+  group_by(state) |>
+  summarize(mean_percbelowpoverty = mean(percbelowpoverty))
+
+state_poverty
+```
+
+```{r}
+state_poverty |>
+  arrange(mean_percbelowpoverty)
+```
+
+Comment: The state with the lowest below poverty percentage is Indiana at approximately 10% and the state with the highest below poverty percentage is Michigan.
+
 \newpage
 
 ## Part 2
 
-
 ### Question 9
 
+```{r}
+df <- tibble(
+  var_1 = c(10, 20, 30, 40, 50),
+  var_2 = c("Pizza", "Burger", "Pizza", "Pizza", "Burger"),
+  var_3 = c("Apple", "Apple", "Pear", "Pear", "Banana")
+)
+
+df
+```
+
+```{r}
+df |>
+  arrange(var_2)
+```
+
+Comment: It sorts the rows of the table in alphabetical order according to variable 2.
+
+```{r}
+df |>
+  group_by(var_2)
+```
+
+Comment: This groups data by variable 2, this is not reflected in the tibble but would matter if you were to try to do something else with the data, like mutate it or summarize it. It is different than arrange in the way that it does not change the order of the rows.
+
+```{r}
+df |>
+  group_by(var_2) |>
+  summarize(mean_var_1 = mean(var_1))
+```
+
+Comment: This groups it by variable 2 and then calculates the mean of variable 1 for each group. Now the tibble shows only 2 rows of variable 2 because we used the groups.
+
+```{r}
+df |>
+  group_by(var_2, var_3) |>
+  summarize(mean_var_1 = mean(var_1))
+```
+
+Comment: Now the tibble is grouped by both variable 2 and variable 3, so it calculates the mean of variable 1 for each combination of variable 2 and variable 3. The message is saying that you can use the .groups argument to change the way the output is grouped.
+
+```{r}
+df |>
+  group_by(var_2, var_3) |>
+  summarize(mean_var_1 = mean(var_1), .groups = "drop")
+```
+
+Comment: This code makes it so after the summarize is done the groups are "dropped" or removed, so any more code would apply to all of the data and not any groups. This is different from the code in d) which still has all the data grouped after.
+
+```{r}
+df |>
+  group_by(var_2, var_3) |>
+  summarize(mean_var_1 = mean(var_1), .groups = "drop")
+
+```
+
+```{r}
+
+df |>
+  group_by(var_2, var_3) |>
+  mutate(mean_var_1 = mean(var_1))
+```
+
+Comment: The code with summarize makes it so there is only one row per group and the mutate code makes it so there are still all the original rows.
