@@ -164,12 +164,30 @@ geom_point() +
 ### Question 7
 
 ```{r}
-
+state_population <- midwest |>
+  group_by(state) |>
+  summarize(total_population =sum(poptotal))|>
+  arrange(desc(total_population))
+state_population
 ```
+
+```{r}
+state_population |>
+  mutate(
+    population_prop = total_population / sum(total_population)
+  ) |>
+  arrange(desc(population_prop))
+```
+
+Comment: Illinois has the largest population, with approximately 27% of people in the Midwest living there. Wisconsin has the smallest population with approximately 12% of the population living there.
 
 \newpage
 
 ### Question 8
+
+```{r}
+
+```
 
 \newpage
 
